@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  student:
+    container_name: student
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file: .env
+    volumes:
+      - "./src/:/home/src/"
+    ports:
+      - ${APP_PORT_GESTOR}:${APP_PORT_GESTOR}
+    depends_on:
+      - db
+
+  discipline:
+    container_name: discipline
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file: .env
+    volumes:
+      - "./src/:/home/src/"
+    ports:
+      - 5001:5000
+    depends_on:
+      - db
+
+  db:
+    container_name: db
+    image: postgres:13.2-alpine
+    env_file: .env
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+
+networks:
+  default:
+    external:
+      name: sistema-academico-network
